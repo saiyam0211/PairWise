@@ -21,20 +21,7 @@
         "backgroundColor": "#FAF7F2"
       },
       "package": "com.PairWise.app",
-      "softwareKeyboardLayoutMode": "resize",
-      "intentFilters": [
-        {
-          "action": "VIEW",
-          "autoVerify": true,
-          "category": ["BROWSABLE", "DEFAULT"],
-          "data": [
-            {
-              "scheme": "com.PairWise.app",
-              "pathPrefix": "/oauthredirect"
-            }
-          ]
-        }
-      ]
+      "softwareKeyboardLayoutMode": "resize"
     },
     "plugins": [
       "expo-router",

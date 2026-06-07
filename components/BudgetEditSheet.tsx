@@ -1,5 +1,6 @@
 import { forwardRef, useCallback, useState } from 'react';
-import { View, Text, Alert } from 'react-native';
+import { View, Text } from 'react-native';
+import { toast } from '@/lib/feedback';
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 import { CalendarRange, Flag } from 'lucide-react-native';
 import { useTheme } from '@/lib/theme';
@@ -57,7 +58,7 @@ export const BudgetEditSheet = forwardRef<BottomSheet>((_, ref) => {
 
     setSaving(false);
     if (error) {
-      Alert.alert('Error', error.message);
+      toast.error('Error', error.message);
       return;
     }
 
@@ -71,7 +72,7 @@ export const BudgetEditSheet = forwardRef<BottomSheet>((_, ref) => {
     setEndingCycle(false);
     setEndCycleOpen(false);
     if (error) {
-      Alert.alert('Error', error);
+      toast.error('Error', error);
       return;
     }
     if (ref && 'current' in ref && ref.current) ref.current.close();
@@ -233,7 +234,7 @@ export const BudgetEditSheet = forwardRef<BottomSheet>((_, ref) => {
         confirmLabel="End cycle"
         cancelLabel="Keep going"
         destructive
-        icon={Flag}
+        icon={<Flag size={26} color={palette.budgetOver} strokeWidth={2.25} />}
         loading={endingCycle}
         onConfirm={confirmEndCycle}
         onCancel={() => setEndCycleOpen(false)}

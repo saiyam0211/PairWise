@@ -1,5 +1,7 @@
+import { useRef } from 'react';
 import { View, Text } from 'react-native';
 import { Delete } from 'lucide-react-native';
+import { CheckIcon, type CheckIconHandle } from '@/components/icons/CheckIcon';
 import { useTheme } from '@/lib/theme';
 import { RADIUS, softShadow } from '@/lib/brand';
 import { MotionPressable } from '@/components/MotionPressable';
@@ -31,6 +33,7 @@ export function NumericKeypad({
   hideDecimal = false,
 }: NumericKeypadProps) {
   const { palette, isDark } = useTheme();
+  const checkRef = useRef<CheckIconHandle>(null);
 
   const keyStyle = (bg: string, height = KEY_H, elevated = true) => ({
     height,
@@ -98,7 +101,10 @@ export function NumericKeypad({
             <Delete size={22} color={palette.onSurface} />
           </MotionPressable>
           <MotionPressable
-            onPress={onConfirm}
+            onPress={() => {
+              if (!confirmDisabled) checkRef.current?.startAnimation();
+              onConfirm();
+            }}
             disabled={confirmDisabled}
             style={keyStyle(
               confirmDisabled ? palette.keyBgDark : palette.accent,
@@ -107,9 +113,13 @@ export function NumericKeypad({
             )}
             scaleTo={confirmDisabled ? 1 : 0.96}
           >
-            <Text style={{ fontSize: 36, color: confirmDisabled ? palette.onSurfaceVariant : palette.onAccent }}>
-              ✓
-            </Text>
+            <CheckIcon
+              ref={checkRef}
+              size={32}
+              duration={1}
+              color={confirmDisabled ? palette.onSurfaceVariant : palette.onAccent}
+              isAnimated={!confirmDisabled}
+            />
           </MotionPressable>
         </View>
       </View>

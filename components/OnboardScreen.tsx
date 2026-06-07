@@ -10,7 +10,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import Animated, { useReducedMotion } from 'react-native-reanimated';
-import { ArrowRight } from 'lucide-react-native';
+import { ArrowRight, ArrowLeft } from '@/components/ArrowIcons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '@/lib/theme';
 import { RADIUS, softShadow } from '@/lib/brand';
@@ -165,10 +165,19 @@ interface PrimaryButtonProps {
   variant?: 'sage' | 'peach';
 }
 
-export function PrimaryButton({ label, onPress, disabled, loading, variant = 'sage' }: PrimaryButtonProps) {
+export function PrimaryButton({
+  label,
+  onPress,
+  disabled,
+  loading,
+  variant = 'sage',
+  trailingArrow,
+}: PrimaryButtonProps & { trailingArrow?: boolean }) {
   const { palette, isDark } = useTheme();
   const off = disabled || loading;
   const bg = off ? palette.keyBgDark : variant === 'peach' ? palette.secondary : palette.accent;
+  const textColor = off ? palette.onSurfaceVariant : palette.onAccent;
+  const displayLabel = label.replace(/\s*→\s*$/, '').trim();
 
   return (
     <MotionPressable
@@ -181,9 +190,22 @@ export function PrimaryButton({ label, onPress, disabled, loading, variant = 'sa
         ...(!off ? softShadow('md', isDark) : {}),
       }}
     >
-      <Text className="font-manrope-bold text-base" style={{ color: off ? palette.onSurfaceVariant : palette.onAccent }}>
-        {loading ? 'Please wait…' : label}
-      </Text>
+      {loading ? (
+        <Text className="font-manrope-bold text-base" style={{ color: textColor }}>
+          Please wait…
+        </Text>
+      ) : trailingArrow ? (
+        <View className="flex-row items-center gap-2">
+          <Text className="font-manrope-bold text-base" style={{ color: textColor }}>
+            {displayLabel}
+          </Text>
+          <ArrowRight size={20} color={textColor} />
+        </View>
+      ) : (
+        <Text className="font-manrope-bold text-base" style={{ color: textColor }}>
+          {displayLabel}
+        </Text>
+      )}
     </MotionPressable>
   );
 }
@@ -193,14 +215,24 @@ interface SecondaryButtonProps {
   onPress: () => void;
 }
 
-export function SecondaryButton({ label, onPress }: SecondaryButtonProps) {
+export function SecondaryButton({ label, onPress, trailingArrow }: SecondaryButtonProps & { trailingArrow?: boolean }) {
   const { palette } = useTheme();
+  const displayLabel = label.replace(/\s*→\s*$/, '').trim();
 
   return (
     <MotionPressable onPress={onPress} className="items-center py-3 w-full">
-      <Text className="font-manrope-semibold text-sm" style={{ color: palette.dateHeader }}>
-        {label}
-      </Text>
+      {trailingArrow ? (
+        <View className="flex-row items-center gap-2">
+          <Text className="font-manrope-semibold text-sm" style={{ color: palette.dateHeader }}>
+            {displayLabel}
+          </Text>
+          <ArrowRight size={18} color={palette.dateHeader} />
+        </View>
+      ) : (
+        <Text className="font-manrope-semibold text-sm" style={{ color: palette.dateHeader }}>
+          {displayLabel}
+        </Text>
+      )}
     </MotionPressable>
   );
 }
@@ -295,7 +327,7 @@ export function OnboardTextInput({
           {loading ? (
             <ActivityIndicator size="small" color={palette.onAccent} />
           ) : (
-            <ArrowRight size={20} color={palette.onAccent} strokeWidth={2.5} />
+            <ArrowRight size={20} color={palette.onAccent} />
           )}
         </MotionPressable>
       ) : null}
@@ -304,15 +336,16 @@ export function OnboardTextInput({
 }
 
 /** Back link styled for inside form cards. */
-export function OnboardBackButton({ label = '← Back', onPress }: { label?: string; onPress: () => void }) {
+export function OnboardBackButton({ label = 'Back', onPress }: { label?: string; onPress: () => void }) {
   const { palette } = useTheme();
 
   return (
     <MotionPressable
       onPress={onPress}
-      className="items-center justify-center w-full"
+      className="flex-row items-center justify-center gap-2 w-full"
       style={{ marginTop: 20, paddingVertical: 12 }}
     >
+      <ArrowLeft size={20} color={palette.dateHeader} />
       <Text
         className="font-manrope-semibold text-sm"
         style={{ color: palette.dateHeader, lineHeight: 20 }}

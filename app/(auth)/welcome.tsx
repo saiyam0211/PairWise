@@ -29,7 +29,7 @@ export default function WelcomeScreen() {
         <Animated.View entering={enterStagger(reduced, 2)}>
           <PrimaryButton label="No, start fresh" onPress={() => choose(false)} variant="peach" />
         </Animated.View>
-        <SecondaryButton label="Already signed in? Continue →" onPress={() => router.push('/(auth)/sign-in')} />
+        <SecondaryButton label="Already signed in? Continue" trailingArrow onPress={() => router.push('/(auth)/sign-in')} />
       </View>
     </OnboardScreen>
   );

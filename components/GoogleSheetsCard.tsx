@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
-import { View, Text, Alert, ActivityIndicator, Switch } from 'react-native';
+import { View, Text, ActivityIndicator, Switch } from 'react-native';
+import { appAlert, toast } from '@/lib/feedback';
 import * as WebBrowser from 'expo-web-browser';
 import * as Google from 'expo-auth-session/providers/google';
-import { Sheet } from 'lucide-react-native';
+import { GoogleSheetIcon } from '@/components/icons/GoogleSheetIcon';
 import { useTheme } from '@/lib/theme';
 import { RADIUS, softShadow } from '@/lib/brand';
 import { MotionPressable } from '@/components/MotionPressable';
@@ -81,7 +82,7 @@ export function GoogleSheetsCard() {
     try {
       setFiles(await listGoogleSpreadsheets());
     } catch (error) {
-      Alert.alert('Could not load spreadsheets', error instanceof Error ? error.message : 'Try again.');
+      toast.error('Could not load spreadsheets', error instanceof Error ? error.message : 'Try again.');
       setPickerOpen(false);
     } finally {
       setPickerLoading(false);
@@ -93,7 +94,7 @@ export function GoogleSheetsCard() {
     if (partnership?.id) await loadPartnership(partnership.id);
     await refreshStatus();
     ensureCycleSheetTab();
-    Alert.alert('Connected', 'New spends will sync to your spreadsheet automatically.');
+    toast.success('Connected', 'New spends will sync to your spreadsheet automatically.');
   }, [partnership?.id, loadPartnership, refreshStatus]);
 
   const handleOAuthSuccess = useCallback(
@@ -103,7 +104,7 @@ export function GoogleSheetsCard() {
         await saveGoogleOAuthToken(refreshToken);
         await openPicker();
       } catch (error) {
-        Alert.alert('Could not connect', error instanceof Error ? error.message : 'Try again.');
+        toast.error('Could not connect', error instanceof Error ? error.message : 'Try again.');
       } finally {
         setConnecting(false);
       }
@@ -115,7 +116,13 @@ export function GoogleSheetsCard() {
     if (response?.type !== 'success') {
       if (response?.type === 'error') {
         setConnecting(false);
-        Alert.alert('Google sign-in failed', response.error?.message ?? 'Please try again.');
+        const detail = response.error?.message ?? response.params?.error_description ?? response.params?.error;
+        void appAlert.show(
+          'Google sign-in failed',
+          detail
+            ? `${detail}\n\nIf this is an EAS build, add the EAS keystore SHA-1 to your Android OAuth client (run: eas credentials -p android).`
+            : 'Please try again.',
+        );
       }
       return;
     }
@@ -126,7 +133,7 @@ export function GoogleSheetsCard() {
       return;
     }
 
-    Alert.alert(
+    void appAlert.show(
       'Google sign-in incomplete',
       'No refresh token was returned. Revoke PairWise in your Google account settings and try again with consent.',
     );
@@ -135,18 +142,18 @@ export function GoogleSheetsCard() {
 
   async function handleConnectPress() {
     if (!googleAuthSupported) {
-      Alert.alert('Development build required', googleAuthUnsupportedMessage());
+      void appAlert.show('Development build required', googleAuthUnsupportedMessage());
       return;
     }
 
     const envError = validateGoogleOAuthEnv();
     if (envError) {
-      Alert.alert('Google OAuth setup', envError);
+      void appAlert.show('Google OAuth setup', envError);
       return;
     }
 
     if (!request) {
-      Alert.alert('Please wait', 'Google sign-in is still loading. Try again in a moment.');
+      toast.info('Please wait', 'Google sign-in is still loading. Try again in a moment.');
       return;
     }
 
@@ -161,7 +168,7 @@ export function GoogleSheetsCard() {
     try {
       await openPicker();
     } catch (error) {
-      Alert.alert('Error', error instanceof Error ? error.message : 'Try again.');
+      toast.error('Error', error instanceof Error ? error.message : 'Try again.');
     }
   }
 
@@ -171,28 +178,26 @@ export function GoogleSheetsCard() {
       await refreshStatus();
       if (partnership?.id) await loadPartnership(partnership.id);
     } catch (error) {
-      Alert.alert('Error', error instanceof Error ? error.message : 'Could not update setting.');
+      toast.error('Error', error instanceof Error ? error.message : 'Could not update setting.');
     }
   }
 
   async function handleDisconnect() {
-    Alert.alert('Disconnect Google Sheets?', 'Automatic syncing will stop for both partners.', [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Disconnect',
-        style: 'destructive',
-        onPress: async () => {
-          try {
-            await disconnectGoogleSheets();
-            setPickerOpen(false);
-            if (partnership?.id) await loadPartnership(partnership.id);
-            await refreshStatus();
-          } catch (error) {
-            Alert.alert('Error', error instanceof Error ? error.message : 'Could not disconnect.');
-          }
-        },
-      },
-    ]);
+    const confirmed = await appAlert.confirm(
+      'Disconnect Google Sheets?',
+      'Automatic syncing will stop for both partners.',
+      { confirmLabel: 'Disconnect', destructive: true },
+    );
+    if (!confirmed) return;
+
+    try {
+      await disconnectGoogleSheets();
+      setPickerOpen(false);
+      if (partnership?.id) await loadPartnership(partnership.id);
+      await refreshStatus();
+    } catch (error) {
+      toast.error('Error', error instanceof Error ? error.message : 'Could not disconnect.');
+    }
   }
 
   if (!partnership) return null;
@@ -210,7 +215,7 @@ export function GoogleSheetsCard() {
         }}
       >
         <View className="flex-row items-center gap-2 mb-1">
-          <Sheet size={18} color={palette.primary} />
+          <GoogleSheetIcon size={18} color={palette.primary} />
           <Text className="font-manrope-bold text-base" style={{ color: palette.onSurface }}>
             Google Sheets
           </Text>

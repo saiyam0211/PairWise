@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { TextInput, Alert } from 'react-native';
+import { TextInput } from 'react-native';
+import { toast } from '@/lib/feedback';
 import { useRouter } from 'expo-router';
 import { OnboardScreen, PrimaryButton, OnboardBackButton, M3InputStyle } from '@/components/OnboardScreen';
 import { useTheme } from '@/lib/theme';
@@ -22,7 +23,7 @@ export default function InviteCodeScreen() {
     setLoading(false);
 
     if (error || !data) {
-      Alert.alert('Invalid code', 'That invite code is invalid or the partnership is full.');
+      toast.error('Invalid code', 'That invite code is invalid or the partnership is full.');
       return;
     }
 
@@ -49,7 +50,8 @@ export default function InviteCodeScreen() {
         style={{ ...M3InputStyle(palette, isDark), fontSize: 32, backgroundColor: palette.cream }}
       />
       <PrimaryButton
-        label="Continue →"
+        label="Continue"
+        trailingArrow
         onPress={continueWithCode}
         disabled={code.trim().length < 4}
         loading={loading}

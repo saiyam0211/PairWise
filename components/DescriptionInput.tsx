@@ -1,5 +1,6 @@
 import { useRef, useEffect } from 'react';
 import { TextInput, View, Text } from 'react-native';
+import { ArrowLeft, ArrowRight } from '@/components/ArrowIcons';
 import Animated, { useReducedMotion } from 'react-native-reanimated';
 import { useTheme } from '@/lib/theme';
 import { RADIUS, softShadow } from '@/lib/brand';
@@ -36,9 +37,10 @@ export function DescriptionInput({
       exiting={exitFadeDown(reduced)}
       className="flex-1 px-6 pt-6"
     >
-      <MotionPressable onPress={onBack} className="mb-4">
+      <MotionPressable onPress={onBack} className="mb-4 flex-row items-center gap-2">
+        <ArrowLeft size={20} color={palette.dateHeader} />
         <Text className="font-manrope-semibold text-sm" style={{ color: palette.dateHeader }}>
-          ← {amountDisplay}
+          {amountDisplay}
         </Text>
       </MotionPressable>
 
@@ -71,7 +73,7 @@ export function DescriptionInput({
 
       <MotionPressable
         onPress={onSubmit}
-        className="py-4 items-center"
+        className="py-4 items-center flex-row justify-center gap-2"
         style={{
           backgroundColor: palette.accent,
           borderRadius: RADIUS.pill,
@@ -79,8 +81,9 @@ export function DescriptionInput({
         }}
       >
         <Text className="font-manrope-bold text-base" style={{ color: palette.onAccent }}>
-          Next →
+          Next
         </Text>
+        <ArrowRight size={20} color={palette.onAccent} />
       </MotionPressable>
     </Animated.View>
   );

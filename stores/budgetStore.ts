@@ -139,7 +139,8 @@ export const useBudgetStore = create<BudgetState>((set, get) => ({
   },
 
   loadPartnership: async (partnershipId) => {
-    set({ loading: true });
+    const isRefresh = get().partnership?.id === partnershipId;
+    if (!isRefresh) set({ loading: true });
 
     const [{ data: partnership }, { data: transactions }, { data: members }] = await Promise.all([
       supabase.from('partnerships').select('*').eq('id', partnershipId).single(),

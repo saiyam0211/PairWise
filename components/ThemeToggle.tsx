@@ -1,12 +1,13 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { View, Text, LayoutChangeEvent } from 'react-native';
-import { Moon, Sun } from 'lucide-react-native';
 import Animated, {
   useAnimatedStyle,
   useReducedMotion,
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
+import { MoonIcon, type MoonIconHandle } from '@/components/icons/MoonIcon';
+import { SunIcon, type SunIconHandle } from '@/components/icons/SunIcon';
 import { useThemeStore } from '@/stores/themeStore';
 import { useTheme, type ThemePreference } from '@/lib/theme';
 import { RADIUS, softShadow } from '@/lib/brand';
@@ -16,12 +17,11 @@ import { MotionPressable } from '@/components/MotionPressable';
 const OPTIONS: {
   value: ThemePreference;
   label: string;
-  Icon: typeof Sun;
   chipBg: string;
   chipIcon: string;
 }[] = [
-  { value: 'light', label: 'Light', Icon: Sun, chipBg: '#EDE8E1', chipIcon: '#7D9488' },
-  { value: 'dark', label: 'Dark', Icon: Moon, chipBg: '#3D4A38', chipIcon: '#E8A882' },
+  { value: 'light', label: 'Light', chipBg: '#EDE8E1', chipIcon: '#7D9488' },
+  { value: 'dark', label: 'Dark', chipBg: '#3D4A38', chipIcon: '#E8A882' },
 ];
 
 const TRACK_PADDING = 5;
@@ -30,6 +30,8 @@ export function ThemeToggle() {
   const { preference, setPreference } = useThemeStore();
   const { palette, isDark } = useTheme();
   const reduced = useReducedMotion();
+  const sunRef = useRef<SunIconHandle>(null);
+  const moonRef = useRef<MoonIconHandle>(null);
 
   const segmentWidth = useSharedValue(0);
   const activeIndex = useSharedValue(preference === 'light' ? 0 : 1);
@@ -50,6 +52,12 @@ export function ThemeToggle() {
     width: segmentWidth.value,
     transform: [{ translateX: activeIndex.value * segmentWidth.value }],
   }));
+
+  function selectTheme(value: ThemePreference) {
+    setPreference(value);
+    if (value === 'light') sunRef.current?.startAnimation();
+    else moonRef.current?.startAnimation();
+  }
 
   return (
     <View
@@ -79,12 +87,12 @@ export function ThemeToggle() {
       />
 
       <View className="flex-row">
-        {OPTIONS.map(({ value, label, Icon, chipBg, chipIcon }) => {
+        {OPTIONS.map(({ value, label, chipBg, chipIcon }) => {
           const active = preference === value;
           return (
             <MotionPressable
               key={value}
-              onPress={() => setPreference(value)}
+              onPress={() => selectTheme(value)}
               style={{ flex: 1, alignItems: 'center', paddingVertical: 12, paddingHorizontal: 8 }}
               scaleTo={0.98}
             >
@@ -99,7 +107,21 @@ export function ThemeToggle() {
                   marginBottom: 6,
                 }}
               >
-                <Icon size={20} color={active ? chipIcon : palette.onSurfaceVariant} strokeWidth={2.25} />
+                {value === 'light' ? (
+                  <SunIcon
+                    ref={sunRef}
+                    size={20}
+                    duration={1}
+                    color={active ? chipIcon : palette.onSurfaceVariant}
+                  />
+                ) : (
+                  <MoonIcon
+                    ref={moonRef}
+                    size={20}
+                    duration={1}
+                    color={active ? chipIcon : palette.onSurfaceVariant}
+                  />
+                )}
               </View>
               <Text
                 className="font-manrope-bold text-sm"

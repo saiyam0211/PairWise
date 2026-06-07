@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Modal, View, Text } from 'react-native';
 import Animated, { useReducedMotion } from 'react-native-reanimated';
-import { CalendarDays, ChevronLeft, ChevronRight } from 'lucide-react-native';
+import { CalendarDays } from 'lucide-react-native';
+import { ArrowLeft, ArrowRight } from '@/components/ArrowIcons';
 import { useTheme } from '@/lib/theme';
 import { RADIUS, softShadow } from '@/lib/brand';
 import { enterFade, enterFadeDown } from '@/lib/motion';
@@ -126,7 +127,7 @@ export function SpendDatePicker({
                 backgroundColor: palette.cream,
               }}
             >
-              <ChevronLeft size={22} color={palette.onSurface} />
+              <ArrowLeft size={22} color={palette.onSurface} />
             </MotionPressable>
 
             <Text className="font-manrope-bold text-base" style={{ color: palette.onSurface }}>
@@ -146,7 +147,7 @@ export function SpendDatePicker({
                 backgroundColor: palette.cream,
               }}
             >
-              <ChevronRight size={22} color={palette.onSurface} />
+              <ArrowRight size={22} color={palette.onSurface} />
             </MotionPressable>
           </View>
 

@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { TextInput, Alert } from 'react-native';
+import { TextInput } from 'react-native';
+import { toast } from '@/lib/feedback';
 import { useRouter } from 'expo-router';
 import { supabase } from '@/lib/supabase';
 import { useTheme } from '@/lib/theme';
@@ -35,7 +36,7 @@ export default function SignInScreen() {
       options: { shouldCreateUser: true },
     });
     setLoading(false);
-    if (error) Alert.alert('Error', error.message);
+    if (error) toast.error('Error', error.message);
     else {
       setDirection('forward');
       setStage('otp');
@@ -51,7 +52,7 @@ export default function SignInScreen() {
       type: 'email',
     });
     setLoading(false);
-    if (error) Alert.alert('Error', error.message);
+    if (error) toast.error('Error', error.message);
   }
 
   return (

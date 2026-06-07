@@ -1,7 +1,7 @@
-import { forwardRef, useEffect, useState } from 'react';
+import { forwardRef, useRef, useState } from 'react';
 import { View, Text } from 'react-native';
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
-import { LogOut } from 'lucide-react-native';
+import { LogoutIcon, type LogoutIconHandle } from '@/components/icons/LogoutIcon';
 import { useTheme } from '@/lib/theme';
 import { RADIUS, softShadow } from '@/lib/brand';
 import { ThemeToggle } from './ThemeToggle';
@@ -11,29 +11,22 @@ import { ConfirmModal } from './ConfirmModal';
 import { useAppBottomSheet } from './bottomSheetConfig';
 import { MotionPressable } from './MotionPressable';
 import { supabase } from '@/lib/supabase';
-import { useAuthStore } from '@/stores/authStore';
 import { useBudgetStore } from '@/stores/budgetStore';
 import { useOnboardingStore } from '@/stores/onboardingStore';
 
 export const SettingsSheet = forwardRef<BottomSheet>((_, ref) => {
   const { palette, isDark } = useTheme();
   const { backdropComponent, backgroundStyle, handleIndicatorStyle, animationConfigs } = useAppBottomSheet();
-  const { clear: clearAuth } = useAuthStore();
-  const { partnership, partnerJoined, loadPartnership } = useBudgetStore();
+  const { partnership, partnerJoined } = useBudgetStore();
 
   const joined = partnerJoined();
   const [signOutOpen, setSignOutOpen] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
-
-  useEffect(() => {
-    if (partnership?.id) loadPartnership(partnership.id);
-  }, [partnership?.id]);
+  const logoutIconRef = useRef<LogoutIconHandle>(null);
 
   async function signOut() {
     setSigningOut(true);
     await supabase.auth.signOut();
-    clearAuth();
-    useBudgetStore.getState().reset();
     useOnboardingStore.getState().reset();
     setSigningOut(false);
     setSignOutOpen(false);
@@ -83,10 +76,13 @@ export const SettingsSheet = forwardRef<BottomSheet>((_, ref) => {
           <ThemeToggle />
         </View>
 
-        <GoogleSheetsCard />
+        {/* <GoogleSheetsCard /> */}
 
         <MotionPressable
-          onPress={() => setSignOutOpen(true)}
+          onPress={() => {
+            logoutIconRef.current?.startAnimation();
+            setSignOutOpen(true);
+          }}
           className="flex-row items-center gap-3 px-4 py-4"
           style={{
             backgroundColor: palette.surface,
@@ -95,7 +91,7 @@ export const SettingsSheet = forwardRef<BottomSheet>((_, ref) => {
             borderColor: palette.border,
           }}
         >
-          <LogOut size={18} color={palette.budgetOver} />
+          <LogoutIcon ref={logoutIconRef} size={18} duration={1} color={palette.budgetOver} />
           <Text className="font-manrope-semibold text-base" style={{ color: palette.budgetOver }}>
             Sign out
           </Text>
@@ -116,7 +112,7 @@ export const SettingsSheet = forwardRef<BottomSheet>((_, ref) => {
       confirmLabel="Sign out"
       cancelLabel="Stay signed in"
       destructive
-      icon={LogOut}
+      icon={<LogoutIcon size={26} duration={1} color={palette.budgetOver} />}
       loading={signingOut}
       onConfirm={signOut}
       onCancel={() => setSignOutOpen(false)}

@@ -1,14 +1,35 @@
 const appJson = require('./app.json');
 
 const iosClientId = process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID ?? '';
-const hasIosClient =
-  iosClientId.includes('.apps.googleusercontent.com') && !/your[-_]?/i.test(iosClientId);
+const androidClientId = process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID ?? '';
 
-const googleScheme = hasIosClient
-  ? `com.googleusercontent.apps.${iosClientId.replace('.apps.googleusercontent.com', '')}`
-  : null;
+function isValidClientId(value) {
+  return value.includes('.apps.googleusercontent.com') && !/your[-_]?/i.test(value);
+}
 
-const urlSchemes = ['pairwise', ...(googleScheme ? [googleScheme] : [])];
+function googleReverseScheme(clientId) {
+  if (!isValidClientId(clientId)) return null;
+  return `com.googleusercontent.apps.${clientId.replace('.apps.googleusercontent.com', '')}`;
+}
+
+const iosGoogleScheme = googleReverseScheme(iosClientId);
+const androidGoogleScheme = googleReverseScheme(androidClientId);
+
+const urlSchemes = ['pairwise', ...(iosGoogleScheme ? [iosGoogleScheme] : [])];
+
+function oauthIntentFilter(scheme) {
+  return {
+    action: 'VIEW',
+    autoVerify: true,
+    category: ['BROWSABLE', 'DEFAULT'],
+    data: [{ scheme, pathPrefix: '/oauthredirect' }],
+  };
+}
+
+const androidIntentFilters = [
+  oauthIntentFilter('com.PairWise.app'),
+  ...(androidGoogleScheme ? [oauthIntentFilter(androidGoogleScheme)] : []),
+];
 
 /** @type {import('expo/config').ExpoConfig} */
 module.exports = {
@@ -19,6 +40,10 @@ module.exports = {
       ...appJson.expo.extra?.eas,
       projectId: 'b8c1e7df-751e-4d57-96af-b25fa62835af',
     },
+  },
+  android: {
+    ...appJson.expo.android,
+    intentFilters: androidIntentFilters,
   },
   ios: {
     ...appJson.expo.ios,

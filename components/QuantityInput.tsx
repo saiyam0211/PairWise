@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { View, Text, TextInput, Modal, FlatList } from 'react-native';
 import Animated, { useReducedMotion } from 'react-native-reanimated';
+import { ArrowLeft } from '@/components/ArrowIcons';
 import { ChevronDown } from 'lucide-react-native';
 import { useTheme } from '@/lib/theme';
 import { RADIUS, softShadow } from '@/lib/brand';
@@ -40,9 +41,10 @@ export function QuantityInput({
 
   return (
     <Animated.View entering={enterFadeDown(reduced)} className="flex-1 px-6 pt-6">
-      <MotionPressable onPress={onBack} className="mb-4">
+      <MotionPressable onPress={onBack} className="mb-4 flex-row items-center gap-2">
+        <ArrowLeft size={20} color={palette.dateHeader} />
         <Text className="font-manrope-semibold text-sm" style={{ color: palette.dateHeader }}>
-          ← {amountDisplay}
+          {amountDisplay}
         </Text>
       </MotionPressable>
 
@@ -95,7 +97,7 @@ export function QuantityInput({
         </MotionPressable>
       </View>
 
-      <PrimaryButton label="Continue →" onPress={onSubmit} loading={saving} variant="peach" />
+      <PrimaryButton label="Continue" onPress={onSubmit} loading={saving} variant="peach" trailingArrow />
 
       <Modal visible={pickerOpen} transparent animationType="slide" onRequestClose={() => setPickerOpen(false)}>
         <MotionPressable

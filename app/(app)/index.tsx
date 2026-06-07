@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { KeyboardAvoidingView, Platform } from 'react-native';
+import { toast } from '@/lib/feedback';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type BottomSheet from '@gorhom/bottom-sheet';
 
@@ -10,6 +11,8 @@ import { supabase } from '@/lib/supabase';
 import { getAnchoredCycleWindow, getCycleWindow } from '@/lib/cycle';
 import { toPastSpendDate } from '@/lib/dates';
 import { keypadDigit, keypadBackspace, formatCents } from '@/lib/money';
+
+import { AppLoadingScreen } from '@/components/AppLoadingScreen';
 
 import { BudgetPill } from '@/components/BudgetPill';
 import { AmountDisplay } from '@/components/AmountDisplay';
@@ -30,10 +33,10 @@ type Stage = 'amount' | 'description' | 'qtyPrompt' | 'quantity' | 'when' | 'suc
 
 export default function SpendScreen() {
   const { palette } = useTheme();
-  const { session } = useAuthStore();
+  const { session, profile } = useAuthStore();
   const partnership = useBudgetStore((s) => s.partnership);
-  const syncCycleState = useBudgetStore((s) => s.syncCycleState);
   const refreshPartnership = useBudgetStore((s) => s.refreshPartnership);
+  const prevCycleKeyRef = useRef<string | null>(null);
 
   const cycleKey = partnership?.cycle_active
     ? `${partnership.current_cycle_start_at}-${partnership.monthly_budget_cents}-${partnership.cycle_start_day}`
@@ -60,13 +63,15 @@ export default function SpendScreen() {
   const budgetEditRef = useRef<BottomSheet>(null);
 
   useEffect(() => {
-    if (partnership?.id && partnership.cycle_active) {
-      syncCycleState();
-    }
-  }, [partnership?.id]);
-
-  useEffect(() => {
     if (!partnership?.id || !partnership.cycle_active) return;
+
+    if (prevCycleKeyRef.current === null) {
+      prevCycleKeyRef.current = cycleKey;
+      return;
+    }
+
+    if (prevCycleKeyRef.current === cycleKey) return;
+    prevCycleKeyRef.current = cycleKey;
 
     refreshPartnership().then(() => {
       setAmountRupees(0);
@@ -78,7 +83,7 @@ export default function SpendScreen() {
       setSaving(false);
       setDatePickerOpen(false);
     });
-  }, [cycleKey]);
+  }, [cycleKey, partnership?.id, partnership?.cycle_active, refreshPartnership]);
 
   function openHistory() {
     settingsRef.current?.close();
@@ -151,7 +156,7 @@ export default function SpendScreen() {
       setSaving(false);
       setDatePickerOpen(false);
       if (error) {
-        Alert.alert('Error', error.message);
+        toast.error('Error', error.message);
         return;
       }
 
@@ -200,7 +205,11 @@ export default function SpendScreen() {
     : undefined;
   const amountDisplay = formatCents(amountRupees * 100, currency);
 
-  if (partnership && !partnership.cycle_active) {
+  if (!profile?.partnership_id || !partnership || partnership.id !== profile.partnership_id) {
+    return <AppLoadingScreen />;
+  }
+
+  if (!partnership.cycle_active) {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: palette.background }} edges={['top']}>
         <CycleClosedScreen />

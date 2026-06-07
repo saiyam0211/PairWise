@@ -1,6 +1,7 @@
-import { type ReactNode } from 'react';
+import { type ReactNode, useRef } from 'react';
 import { View, Text } from 'react-native';
-import { Settings, Pencil } from 'lucide-react-native';
+import { EditPencilIcon } from '@/components/icons/EditPencilIcon';
+import { SettingsIcon, type SettingsIconHandle } from '@/components/SettingsIcon';
 import { useTheme } from '@/lib/theme';
 import { RADIUS, softShadow } from '@/lib/brand';
 import { useBudgetStore } from '@/stores/budgetStore';
@@ -66,6 +67,7 @@ function SideButton({
 
 export function BudgetPill({ onHistoryPress, onSettingsPress, onEditPress }: BudgetPillProps) {
   const { palette, isDark } = useTheme();
+  const settingsIconRef = useRef<SettingsIconHandle>(null);
   const { session } = useAuthStore();
   const partnership = useBudgetStore((s) => s.partnership);
   const remaining = useBudgetStore((s) => s.remainingCents());
@@ -176,12 +178,19 @@ export function BudgetPill({ onHistoryPress, onSettingsPress, onEditPress }: Bud
       </MotionPressable>
 
       <View className="gap-2 mt-1">
-        <SideButton onPress={onSettingsPress} palette={palette} isDark={isDark}>
-          <Settings size={20} color={palette.primary} />
+        <SideButton
+          onPress={() => {
+            settingsIconRef.current?.startAnimation();
+            onSettingsPress();
+          }}
+          palette={palette}
+          isDark={isDark}
+        >
+          <SettingsIcon ref={settingsIconRef} size={20} duration={1} color={palette.primary} />
         </SideButton>
         {isCreator ? (
           <SideButton onPress={onEditPress} palette={palette} isDark={isDark}>
-            <Pencil size={18} color={palette.secondary} />
+            <EditPencilIcon size={18} color={palette.secondary} />
           </SideButton>
         ) : null}
       </View>

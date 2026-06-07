@@ -1,6 +1,7 @@
 import { View, Text } from 'react-native';
 import Animated, { useReducedMotion } from 'react-native-reanimated';
 import { Scale } from 'lucide-react-native';
+import { ArrowLeft } from '@/components/ArrowIcons';
 import { useTheme } from '@/lib/theme';
 import { RADIUS, softShadow } from '@/lib/brand';
 import { enterFade, exitFadeDown } from '@/lib/motion';
@@ -30,9 +31,10 @@ export function QuantityPrompt({
       exiting={exitFadeDown(reduced)}
       className="flex-1 px-6 pt-6 justify-center"
     >
-      <MotionPressable onPress={onBack} className="mb-4 absolute top-6 left-6">
+      <MotionPressable onPress={onBack} className="mb-4 absolute top-6 left-6 flex-row items-center gap-2">
+        <ArrowLeft size={20} color={palette.dateHeader} />
         <Text className="font-manrope-semibold text-sm" style={{ color: palette.dateHeader }}>
-          ← {amountDisplay}
+          {amountDisplay}
         </Text>
       </MotionPressable>
 

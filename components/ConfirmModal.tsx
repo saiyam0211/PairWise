@@ -1,6 +1,6 @@
+import { type ReactNode } from 'react';
 import { Modal, View, Text } from 'react-native';
 import Animated, { useReducedMotion } from 'react-native-reanimated';
-import type { LucideIcon } from 'lucide-react-native';
 import { useTheme } from '@/lib/theme';
 import { RADIUS, softShadow } from '@/lib/brand';
 import { enterFade, enterFadeDown } from '@/lib/motion';
@@ -13,7 +13,7 @@ interface ConfirmModalProps {
   confirmLabel?: string;
   cancelLabel?: string;
   destructive?: boolean;
-  icon?: LucideIcon;
+  icon?: ReactNode;
   loading?: boolean;
   onConfirm: () => void;
   onCancel: () => void;
@@ -35,7 +35,6 @@ export function ConfirmModal({
   const reduced = useReducedMotion();
 
   const iconBg = destructive ? `${palette.budgetOver}22` : `${palette.sage}55`;
-  const iconColor = destructive ? palette.budgetOver : palette.primary;
   const confirmBg = destructive ? palette.budgetOver : palette.accent;
   const confirmText = destructive ? '#FFFFFF' : palette.onAccent;
 
@@ -70,7 +69,7 @@ export function ConfirmModal({
               className="self-center w-14 h-14 rounded-full items-center justify-center mb-4"
               style={{ backgroundColor: iconBg }}
             >
-              <Icon size={26} color={iconColor} strokeWidth={2.25} />
+              {Icon}
             </View>
           ) : null}
 

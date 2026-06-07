@@ -1,7 +1,9 @@
 import { useState } from 'react';
-import { Modal, View, Text, ScrollView, ActivityIndicator, Alert } from 'react-native';
+import { Modal, View, Text, ScrollView, ActivityIndicator } from 'react-native';
+import { toast } from '@/lib/feedback';
 import Animated, { useReducedMotion } from 'react-native-reanimated';
-import { Check, FileSpreadsheet, Plus, Sheet } from 'lucide-react-native';
+import { Check, FileSpreadsheet, Plus } from 'lucide-react-native';
+import { GoogleSheetIcon } from '@/components/icons/GoogleSheetIcon';
 import { useTheme } from '@/lib/theme';
 import { RADIUS, softShadow } from '@/lib/brand';
 import { enterFade, enterFadeDown } from '@/lib/motion';
@@ -41,7 +43,7 @@ export function GoogleSheetsPicker({
       await setGoogleSpreadsheet(file.id, file.name);
       onConnected();
     } catch (error) {
-      Alert.alert('Could not connect', error instanceof Error ? error.message : 'Try again.');
+      toast.error('Could not connect', error instanceof Error ? error.message : 'Try again.');
     } finally {
       onSavingChange(false);
     }
@@ -53,7 +55,7 @@ export function GoogleSheetsPicker({
       await createPairwiseSpreadsheet();
       onConnected();
     } catch (error) {
-      Alert.alert('Could not create spreadsheet', error instanceof Error ? error.message : 'Try again.');
+      toast.error('Could not create spreadsheet', error instanceof Error ? error.message : 'Try again.');
     } finally {
       onSavingChange(false);
     }
@@ -88,7 +90,7 @@ export function GoogleSheetsPicker({
               className="w-11 h-11 rounded-full items-center justify-center"
               style={{ backgroundColor: palette.sage + '55' }}
             >
-              <Sheet size={22} color={palette.onSurface} />
+              <GoogleSheetIcon size={22} color={palette.onSurface} />
             </View>
             <View className="flex-1">
               <Text className="font-manrope-extrabold text-lg" style={{ color: palette.onSurface }}>

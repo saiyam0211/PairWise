@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
-import { View, Text, ScrollView, Alert } from 'react-native';
+import { View, Text, ScrollView } from 'react-native';
+import { toast } from '@/lib/feedback';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, { useReducedMotion } from 'react-native-reanimated';
-import { CalendarCheck, ChevronLeft, History, PiggyBank, TrendingDown, Users } from 'lucide-react-native';
+import { CalendarCheck, History, PiggyBank, TrendingDown, Users } from 'lucide-react-native';
+import { ArrowLeft } from '@/components/ArrowIcons';
 import { useTheme } from '@/lib/theme';
 import { RADIUS, softShadow } from '@/lib/brand';
 import { fmtCycleDate } from '@/lib/cycle';
@@ -172,7 +174,7 @@ export function CycleClosedScreen() {
     setSaving(true);
     const { error } = await startNewCycle(budgetRupees * 100, cycleStartDay);
     setSaving(false);
-    if (error) Alert.alert('Error', error);
+    if (error) toast.error('Error', error);
   }
 
   if (mode === 'setup' && isCreator) {
@@ -180,8 +182,8 @@ export function CycleClosedScreen() {
       <SafeAreaView style={{ flex: 1, backgroundColor: palette.background }} edges={['top', 'bottom']}>
         <View className="flex-1">
           <View className="px-6 pt-4 pb-2">
-            <MotionPressable onPress={() => setMode('summary')} className="flex-row items-center gap-1 mb-4 self-start">
-              <ChevronLeft size={20} color={palette.dateHeader} />
+            <MotionPressable onPress={() => setMode('summary')} className="flex-row items-center gap-2 mb-4 self-start">
+              <ArrowLeft size={20} color={palette.dateHeader} />
               <Text className="font-manrope-semibold text-sm" style={{ color: palette.dateHeader }}>
                 Back
               </Text>
@@ -266,9 +268,9 @@ export function CycleClosedScreen() {
                   setSelected(null);
                   setMode('summary');
                 }}
-                className="flex-row items-center gap-1 mb-4 self-start"
+                className="flex-row items-center gap-2 mb-4 self-start"
               >
-                <ChevronLeft size={20} color={palette.dateHeader} />
+                <ArrowLeft size={20} color={palette.dateHeader} />
                 <Text className="font-manrope-semibold text-sm" style={{ color: palette.dateHeader }}>
                   Back to summary
                 </Text>

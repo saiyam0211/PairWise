@@ -1,4 +1,5 @@
-import { View, Text, Linking, Share, Alert, Platform } from 'react-native';
+import { View, Text, Linking, Share, Platform } from 'react-native';
+import { toast } from '@/lib/feedback';
 import Animated, { useReducedMotion } from 'react-native-reanimated';
 import { Copy, MessageCircle, MessagesSquare, Share2 } from 'lucide-react-native';
 import { useTheme } from '@/lib/theme';
@@ -18,7 +19,7 @@ async function openUrl(url: string, fallback: string) {
   if (can) {
     await Linking.openURL(url);
   } else {
-    Alert.alert('Unavailable', fallback);
+    toast.info('Unavailable', fallback);
   }
 }
 

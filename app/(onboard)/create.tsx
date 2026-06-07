@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { View, Text, Alert } from 'react-native';
+import { View, Text } from 'react-native';
+import { toast } from '@/lib/feedback';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import Animated, { useReducedMotion } from 'react-native-reanimated';
 import { supabase } from '@/lib/supabase';
+import { refreshAuthPartnership } from '@/lib/authSession';
 import { useAuthStore } from '@/stores/authStore';
-import { useBudgetStore } from '@/stores/budgetStore';
 import { useTheme } from '@/lib/theme';
 import { RADIUS, softShadow } from '@/lib/brand';
 import { enterScreen, exitScreen, type ScreenDirection } from '@/lib/motion';
@@ -26,8 +27,7 @@ export default function CreatePartnershipScreen() {
   const { palette, isDark } = useTheme();
   const reduced = useReducedMotion();
   const router = useRouter();
-  const { session, setProfile } = useAuthStore();
-  const { loadPartnership, subscribeRealtime } = useBudgetStore();
+  const { session } = useAuthStore();
 
   const [stage, setStage] = useState<Stage>('name');
   const [direction, setDirection] = useState<ScreenDirection>('forward');
@@ -65,26 +65,12 @@ export default function CreatePartnershipScreen() {
     });
 
     if (partnershipErr || !partnershipId) {
-      Alert.alert('Error', partnershipErr?.message ?? 'Failed to create partnership');
+      toast.error('Error', partnershipErr?.message ?? 'Failed to create partnership');
       setLoading(false);
       return;
     }
 
-    const { data: profile, error: profileErr } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', session.user.id)
-      .single();
-
-    if (profileErr || !profile) {
-      Alert.alert('Error', profileErr?.message ?? 'Failed to load profile');
-      setLoading(false);
-      return;
-    }
-
-    setProfile(profile);
-    await loadPartnership(partnershipId);
-    subscribeRealtime(partnershipId);
+    await refreshAuthPartnership();
     setLoading(false);
     router.replace('/(app)');
   }
@@ -194,7 +180,7 @@ export default function CreatePartnershipScreen() {
       subtitle={meta.subtitle}
       card={meta.card}
       scroll={meta.scroll}
-      footer={stage === 'invite' ? <PrimaryButton label="Continue to budget →" onPress={() => goForward('budget')} /> : undefined}
+      footer={stage === 'invite' ? <PrimaryButton label="Continue to budget" trailingArrow onPress={() => goForward('budget')} /> : undefined}
     >
       {stage === 'name' && (
         <>
