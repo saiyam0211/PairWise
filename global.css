@@ -1,0 +1,57 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* PairWise expressive — light */
+:root {
+  --color-background:           250 247 242;
+  --color-surface:              255 252 249;
+  --color-surface-variant:      237 232 225;
+  --color-on-surface:           61 64 57;
+  --color-on-surface-variant:   107 110 104;
+  --color-primary:              92 107 88;
+  --color-on-primary:           255 255 255;
+  --color-primary-container:    228 235 225;
+  --color-on-primary-container: 42 51 40;
+
+  --color-budget-good:          125 148 136;
+  --color-budget-good-text:     255 255 255;
+  --color-budget-card:          92 107 88;
+  --color-budget-card-text:     255 255 255;
+  --color-budget-over:          214 69 69;
+
+  --color-accent:               92 107 88;
+  --color-on-accent:            255 255 255;
+  --color-date-header:          125 148 136;
+
+  --color-key-bg:               240 235 228;
+  --color-key-bg-dark:          226 221 213;
+  --color-border:               224 219 211;
+}
+
+/* PairWise expressive — dark */
+.dark {
+  --color-background:           28 31 27;
+  --color-surface:              38 42 37;
+  --color-surface-variant:      53 57 50;
+  --color-on-surface:           237 232 225;
+  --color-on-surface-variant:   168 172 164;
+  --color-primary:              181 196 174;
+  --color-on-primary:           28 42 24;
+  --color-primary-container:    61 74 56;
+  --color-on-primary-container: 228 235 225;
+
+  --color-budget-good:          143 160 136;
+  --color-budget-good-text:     28 42 24;
+  --color-budget-card:          61 74 56;
+  --color-budget-card-text:     228 235 225;
+  --color-budget-over:          255 138 128;
+
+  --color-accent:               181 196 174;
+  --color-on-accent:            28 42 24;
+  --color-date-header:          181 196 174;
+
+  --color-key-bg:               53 57 50;
+  --color-key-bg-dark:          69 73 67;
+  --color-border:               69 73 67;
+}
