@@ -7,9 +7,10 @@ import { ThemeProvider } from '@/components/ThemeProvider';
 import { ToastHost } from '@/components/ToastHost';
 import { AppAlertHost } from '@/components/AppAlertHost';
 import { AppLoadingScreen } from '@/components/AppLoadingScreen';
+import { ConfigErrorScreen } from '@/components/ConfigErrorScreen';
 import { toast } from '@/lib/feedback';
 import { hydrateAuthSession } from '@/lib/authSession';
-import { supabase } from '@/lib/supabase';
+import { isSupabaseConfigured, supabase } from '@/lib/supabase';
 import { useAuthStore } from '@/stores/authStore';
 import { useBudgetStore } from '@/stores/budgetStore';
 import { useOnboardingStore } from '@/stores/onboardingStore';
@@ -57,6 +58,8 @@ export default function RootLayout() {
   const hydratingRef = useRef(false);
 
   useEffect(() => {
+    if (!isSupabaseConfigured) return;
+
     let mounted = true;
 
     async function initAuth() {
@@ -136,6 +139,16 @@ export default function RootLayout() {
 
     if (!inApp) router.replace('/(app)');
   }, [session, profile, fontsLoaded, authReady, segments, path, pendingInviteToken]);
+
+  if (!isSupabaseConfigured) {
+    return (
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <ThemeProvider>
+          <ConfigErrorScreen />
+        </ThemeProvider>
+      </GestureHandlerRootView>
+    );
+  }
 
   if (!fontsLoaded || !authReady) {
     return (

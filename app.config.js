@@ -34,6 +34,12 @@ const androidIntentFilters = [
 /** @type {import('expo/config').ExpoConfig} */
 module.exports = {
   ...appJson.expo,
+  runtimeVersion: '1.0.0',
+  updates: {
+    url: 'https://u.expo.dev/b8c1e7df-751e-4d57-96af-b25fa62835af',
+    checkAutomatically: 'ON_LOAD',
+    fallbackToCacheTimeout: 0,
+  },
   extra: {
     ...appJson.expo.extra,
     eas: {

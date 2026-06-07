@@ -1,9 +1,11 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
 
-const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL ?? '';
-const SUPABASE_ANON_KEY = process.env.EXPO_PUBLIC_SUPABASE_KEY ?? '';
+const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL?.trim() ?? '';
+const SUPABASE_ANON_KEY = process.env.EXPO_PUBLIC_SUPABASE_KEY?.trim() ?? '';
+
+export const isSupabaseConfigured = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
 
 const secureStoreAdapter = Platform.OS !== 'web'
   ? {
@@ -13,13 +15,32 @@ const secureStoreAdapter = Platform.OS !== 'web'
     }
   : undefined;
 
-export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-  auth: {
-    storage: secureStoreAdapter,
-    autoRefreshToken: true,
-    persistSession: true,
-    detectSessionInUrl: false,
-    flowType: 'implicit',
+let client: SupabaseClient<Database> | null = null;
+
+function getClient(): SupabaseClient<Database> {
+  if (client) return client;
+  if (!isSupabaseConfigured) {
+    throw new Error(
+      'PairWise is missing server configuration. Reinstall a build that includes EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_KEY.',
+    );
+  }
+  client = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: {
+      storage: secureStoreAdapter,
+      autoRefreshToken: true,
+      persistSession: true,
+      detectSessionInUrl: false,
+      flowType: 'implicit',
+    },
+  });
+  return client;
+}
+
+/** Lazy client — avoids crashing at import when env vars were not baked into the release build. */
+export const supabase = new Proxy({} as SupabaseClient<Database>, {
+  get(_target, prop) {
+    const value = Reflect.get(getClient(), prop, getClient());
+    return typeof value === 'function' ? (value as (...args: unknown[]) => unknown).bind(getClient()) : value;
   },
 });
 
