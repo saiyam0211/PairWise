@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PairWise — Spend wisely, together</title>
+<meta name="description" content="A small app that helps couples spend wisely, together. One partner logs, both see the update instantly. Free, no ads, real-time sync." />
+<link rel="icon" type="image/png" href="assets/pairwise-icon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<!-- ============================ HEADER ============================ -->
+<header class="site-header" id="header">
+  <div class="wrap header-inner">
+    <a class="brand" href="#top" aria-label="PairWise home">
+      <img src="assets/pairwise-icon.png" alt="PairWise logo — two interlocked circles" />
+      <span class="word">Pair<b>Wise</b></span>
+    </a>
+    <nav class="nav-right">
+      <a class="icon-link" href="https://github.com" target="_blank" rel="noopener" aria-label="PairWise on GitHub">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1.5A10.5 10.5 0 0 0 8.68 22a.79.79 0 0 0 .58-.21.74.74 0 0 0 .19-.52v-1.83c-2.92.63-3.54-1.4-3.54-1.4a2.78 2.78 0 0 0-1.17-1.54c-.95-.65.08-.64.08-.64a2.2 2.2 0 0 1 1.61 1.08 2.24 2.24 0 0 0 3.05.87 2.24 2.24 0 0 1 .67-1.4c-2.33-.27-4.78-1.17-4.78-5.18a4.06 4.06 0 0 1 1.08-2.82 3.78 3.78 0 0 1 .1-2.78s.88-.28 2.88 1.07a9.92 9.92 0 0 1 5.24 0c2-1.35 2.88-1.07 2.88-1.07a3.78 3.78 0 0 1 .1 2.78 4.06 4.06 0 0 1 1.08 2.82c0 4-2.46 4.9-4.8 5.16a2.5 2.5 0 0 1 .72 1.94v2.88a.75.75 0 0 0 .77.73A10.5 10.5 0 0 0 12 1.5Z"/></svg>
+      </a>
+      <a class="btn btn-primary btn-sm" href="#download">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.6 2.2 13 12 3.6 21.8c-.3-.2-.5-.5-.5-1V3.2c0-.5.2-.8.5-1Zm10.8 8.1 2.9 1.7-2.9 1.7-2-1.7 2-1.7Zm-1.2-1L4.9 3.1l9 5.2-1.7 1ZM4.9 20.9l8.3-6.2 1.7 1-9 5.2Z"/></svg>
+        <span class="label-hide">Get it on Google&nbsp;Play</span>
+        <span aria-hidden="true">↗</span>
+      </a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- ============================ HERO ============================ -->
+<section class="hero" id="hero">
+  <!-- decorative blobs -->
+  <svg class="blob soft" style="top:-60px;left:-90px;width:360px" viewBox="0 0 200 200" aria-hidden="true"><path fill="#E9EFE6" d="M44.8,-58.3C57.4,-49.5,66.5,-35.2,69.6,-19.6C73.2,-4,71.8,12.9,64.6,26.7C57.4,40.5,44.4,51.2,29.8,58.6C15.2,66,-1,70.1,-16.7,67C-32.4,63.9,-47.6,53.6,-57.6,39.6C-67.6,25.6,-72.4,7.9,-69.4,-8.2C-66.4,-24.3,-55.6,-38.8,-42.4,-47.8C-29.2,-56.8,-14.6,-60.3,1.2,-61.9C17,-63.5,34,-67.1,44.8,-58.3Z" transform="translate(100 100)"/></svg>
+  <svg class="blob soft" style="bottom:-120px;right:-80px;width:420px" viewBox="0 0 200 200" aria-hidden="true"><path fill="#FBEBDF" d="M42.7,-56.8C54.6,-47.8,63.5,-34.3,67.4,-19.3C71.8,-4.3,72.2,12.2,66.1,25.9C59.5,39.6,46.8,49.7,38.8,59.8C23.6,66.9,7.4,69.2C-8.8,71.5,-26,69,-39.6,60.6C-53.2,52.2,-63.2,37.9,-67.7,22.1C-72.2,6.3,-71.2,-11,-64.4,-25.3C-57.6,-39.6,-45,-50.9,-31.1,-59.4C-17.2,-67.9,-2,-73.6,12.1,-71.4C26.2,-69.2,30.8,-65.8,42.7,-56.8Z" transform="translate(100 100)"/></svg>
+
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <h1 class="hero-title" aria-label="A small app that helps you spend wisely, together">
+        <span class="hero-line hero-line--1">
+          <span class="hero-word">A</span>
+          <span class="hero-word">small</span>
+          <span class="hero-word">app</span>
+          <span class="hero-word">that</span>
+          <span class="hero-word">helps</span>
+          <span class="hero-word">you</span>
+        </span>
+        <span class="hero-line hero-line--2">
+          <span class="hero-word t-sage">spend</span>
+          <span class="hero-word">wisely,</span>
+          <span class="hero-word script t-peach">together</span>
+        </span>
+      </h1>
+      <!-- <div class="badge-row">
+        <span class="badge"><span class="dot"></span>Free to use</span>
+        <span class="badge"><span class="dot"></span>No ads</span>
+        <span class="badge"><span class="dot"></span>Real-time sync</span>
+      </div> -->
+      <!-- <div class="cta-row">
+        <a class="btn btn-primary" href="#download">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.6 2.2 13 12 3.6 21.8c-.3-.2-.5-.5-.5-1V3.2c0-.5.2-.8.5-1Zm10.8 8.1 2.9 1.7-2.9 1.7-2-1.7 2-1.7Zm-1.2-1L4.9 3.1l9 5.2-1.7 1ZM4.9 20.9l8.3-6.2 1.7 1-9 5.2Z"/></svg>
+          Get it on Google Play
+        </a>
+        <a class="btn btn-ghost" href="#download">App Store — soon</a>
+      </div> -->
+    </div>
+
+
+    <svg class="starburst hero-starburst" style="top:-60%;right:2%;width:130px" viewBox="0 0 100 100" aria-hidden="true">
+      <g stroke="#7D9488" stroke-width="7" stroke-linecap="round">
+        <line x1="50" y1="12" x2="50" y2="34"/><line x1="50" y1="66" x2="50" y2="88"/>
+        <line x1="12" y1="50" x2="34" y2="50"/><line x1="66" y1="50" x2="88" y2="50"/>
+        <line x1="24" y1="24" x2="39" y2="39"/><line x1="61" y1="61" x2="76" y2="76"/>
+        <line x1="76" y1="24" x2="61" y2="39"/><line x1="39" y1="61" x2="24" y2="76"/>
+      </g>
+    </svg>
+    <!-- <div class="hero-art">
+
+      <div class="phone tilt" data-parallax="0.04">
+        <div class="phone-screen">
+          <div class="statusbar">
+            <span>1:00</span>
+            <span class="sig"><span class="bars"></span><span class="batt"></span></span>
+          </div>
+          <div class="screen-pad">
+            <div class="rem-card">
+              <div class="lbl">REMAINING</div>
+              <div class="amt">₹27,000.00</div>
+              <div class="pair"><span class="av sage">S</span><span class="av peach">S</span></div>
+              <div class="bar"><i></i></div>
+              <div class="meta"><span>₹0.00 of ₹27,000.00</span><span>28d left</span></div>
+            </div>
+            <div class="entry">
+              <div class="tag">Enter amount</div>
+              <div class="big"><span class="cur">₹</span>0</div>
+              <div class="hint">Use the keypad below</div>
+            </div>
+            <div class="keypad">
+              <div class="k">7</div><div class="k">8</div><div class="k">9</div>
+              <div class="k del"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Z"/><path d="m18 9-6 6M12 9l6 6"/></svg></div>
+              <div class="k">4</div><div class="k">5</div><div class="k">6</div>
+              <div class="k ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m20 6-11 11-5-5"/></svg></div>
+              <div class="k">1</div><div class="k">2</div><div class="k">3</div>
+              <div class="k zero">0</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div> -->
+  </div>
+</section>
+
+<!-- ============================ HOW IT WORKS ============================ -->
+<section class="section-pad" id="how">
+  <div class="wrap">
+    <div class="how-pin">
+      <svg class="starburst how-burst" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="30" fill="none" stroke="#E8A882" stroke-width="6"/><circle cx="50" cy="50" r="13" fill="#E8A882"/></svg>
+
+      <div class="how-layout">
+        <div class="how-copy-min">
+          <span class="how-eyebrow">How it works</span>
+          <h2 class="how-headline" aria-label="Log. Sync. Done.">
+            <span class="how-split">Log.</span>
+            <span class="how-split">Sync.</span>
+            <span class="how-split script t-peach">Done.</span>
+          </h2>
+          <div class="how-chips" aria-hidden="true">
+            <span class="how-chip"><i>1</i> Tap</span>
+            <span class="how-chip"><i>2</i> Sync</span>
+            <span class="how-chip"><i>3</i> Share</span>
+          </div>
+        </div>
+
+        <div class="how-phone-stage">
+          <span class="how-sync-ring how-sync-ring--a" aria-hidden="true"></span>
+          <span class="how-sync-ring how-sync-ring--b" aria-hidden="true"></span>
+
+          <div class="phone how-phone tilt-r">
+            <div class="phone-screen">
+              <div class="statusbar">
+                <span>1:00</span>
+                <span class="sig"><span class="bars"></span><span class="batt"></span></span>
+              </div>
+              <div class="screen-pad">
+                <!-- <div class="how-toast">
+                  <span class="av peach">S</span>
+                  <span>Partner updated</span>
+                </div> -->
+                <div class="rem-card how-rem">
+                  <div class="lbl">REMAINING</div>
+                  <div class="amt how-rem-amt">₹27,000</div>
+                  <div class="pair how-pair"><span class="av sage">S</span><span class="av peach">S</span></div>
+                  <div class="bar"><i class="how-bar-fill"></i></div>
+                </div>
+                <div class="entry how-entry">
+                  <div class="tag">Enter amount</div>
+                  <div class="big"><span class="cur">₹</span><span class="how-entry-amt">0</span></div>
+                </div>
+                <div class="cat-pills how-cats">
+                  <span class="cat">Food</span>
+                  <span class="cat on how-cat-on">Groceries</span>
+                  <span class="cat peach">Rent</span>
+                </div>
+                <div class="keypad how-keys">
+                  <div class="k">7</div><div class="k">8</div><div class="k">9</div>
+                  <div class="k ok how-key-ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m20 6-11 11-5-5"/></svg></div>
+                  <div class="k">4</div><div class="k">5</div><div class="k">6</div>
+                  <div class="k">1</div><div class="k">2</div><div class="k">3</div>
+                  <div class="k zero">0</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ BENTO GRID ============================ -->
+<section class="section-pad" id="features">
+  <div class="wrap">
+    <div class="sec-head bento-head" style="margin-bottom:40px">
+      <span class="eyebrow bento-eyebrow">Built for two</span>
+      <h2 class="bento-title">
+        <span class="bento-split">Everything you share,</span>
+        <span class="bento-split">in one calm place.</span>
+      </h2>
+    </div>
+
+    <div class="bento">
+      <!-- Keep track -->
+      <div class="bcard sage b-track">
+        <div class="split">
+          <div class="copy">
+            <h3>Keep track of your shared budget</h3>
+            <p class="body">One number you both watch — what's left this cycle, always up to date.</p>
+          </div>
+          <div class="mock-stage">
+          <div class="phone bento-phone" style="--pw:330px;aspect-ratio:330/440" data-parallax="0.03">
+            <div class="phone-screen" style="background:#FFFCF9">
+              <div class="screen-pad" style="padding-top:14px">
+                <div class="sheet-handle"></div>
+                <div class="sheet-title">This cycle</div>
+                <div class="sheet-sub">Current month spending</div>
+                <div class="budget-card">
+                  <div class="top">
+                    <div class="lbl">MONTHLY BUDGET</div>
+                    <div class="pair"><span class="av sage">S</span><span class="av peach">S</span></div>
+                  </div>
+                  <div class="big">₹27,000.00</div>
+                  <div class="stat-row">
+                    <div class="stat"><div class="k">Spent</div><div class="v">₹420</div></div>
+                    <div class="stat"><div class="k">Remaining</div><div class="v green">₹26,580</div></div>
+                    <div class="stat"><div class="k">Cycle</div><div class="v peach">28d left</div></div>
+                  </div>
+                  <div class="cycle-track">
+                    <div class="ends"><span>5 Jun</span><span>4 Jul</span></div>
+                    <div class="bar"><i class="b-cycle-fill"></i></div>
+                    <div class="day">Day 4 of 31 in this cycle</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Free forever / without ads -->
+      <div class="bcard cream b-free">
+        <span class="eyebrow">No catch</span>
+        <div class="free-pills">
+          <span class="free-pill hl hl-under hl-sage">Free forever
+            <svg viewBox="0 0 200 24" preserveAspectRatio="none" aria-hidden="true"><path d="M4 17 C 50 10, 150 10, 196 15"/></svg>
+          </span>
+          <span class="free-pill hl hl-ring">Without ads
+            <svg viewBox="0 0 220 70" preserveAspectRatio="none" aria-hidden="true"><path d="M30 18 C 90 2, 180 4, 200 26 C 214 44, 150 64, 90 62 C 30 60, 4 44, 14 28 C 22 16, 70 10, 130 12"/></svg>
+          </span>
+        </div>
+        <p class="free-note">Yours and your partner's money — never ours to monetise. No upsells, no tracking, no ads.</p>
+      </div>
+
+      <!-- Real-time syncing -->
+      <div class="bcard peach b-sync">
+        <h3>Real-time syncing</h3>
+        <p class="body">One of you logs — both budgets update the same second.</p>
+        <div class="sync-stage">
+          <div class="sync-toast">
+            <div class="pair"><span class="av peach">S</span></div>
+            <div class="msg"><b>Partner</b> added Groceries</div>
+            <div class="delta peach">−₹240</div>
+          </div>
+          <div class="sync-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg></div>
+          <div class="sync-toast right">
+            <div class="pair"><span class="av sage">S</span></div>
+            <div class="msg">You both see <b>₹26,580 left</b></div>
+            <div class="delta sage">live</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- History -->
+      <div class="bcard sage b-history">
+        <div class="split">
+          <div class="copy">
+            <h3>History is always at hand</h3>
+            <p class="body">Every spend, who logged it, and one tap to edit or undo.</p>
+          </div>
+          <div class="mock-stage">
+          <div class="phone bento-phone" style="--pw:330px;aspect-ratio:330/410" data-parallax="0.03">
+            <div class="phone-screen" style="background:#FFFCF9">
+              <div class="screen-pad" style="padding-top:16px">
+                <div class="tx-head">
+                  <div><div class="h">26 June</div><div class="sub">4 expenses</div></div>
+                  <div class="pair" style="--av:26px;--ring:#FFFCF9"><span class="av sage">S</span><span class="av peach">S</span></div>
+                </div>
+                <div class="tx bento-tx">
+                  <div class="ic sage"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9h18M3 9l2-5h14l2 5M3 9v9a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9"/></svg></div>
+                  <div class="mid"><div class="t">Groceries</div><div class="s"><span class="who peach"></span>Partner · 09:48</div></div>
+                  <div class="amt">₹240</div>
+                </div>
+                <div class="tx bento-tx">
+                  <div class="ic peach"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 17h16M4 17a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2M7 21v-4M17 21v-4"/></svg></div>
+                  <div class="mid"><div class="t">Metro card</div><div class="s"><span class="who sage"></span>You · 11:02</div></div>
+                  <div class="amt">₹90</div>
+                </div>
+                <div class="tx bento-tx">
+                  <div class="ic sage"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8ZM6 1v3M10 1v3M14 1v3"/></svg></div>
+                  <div class="mid"><div class="t">Coffee</div><div class="s"><span class="who peach"></span>Partner · 15:32</div></div>
+                  <div class="amt">₹60</div>
+                </div>
+                <div class="tx bento-tx">
+                  <div class="ic peach"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9h18M3 9l2-5h14l2 5M3 9v9a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9"/></svg></div>
+                  <div class="mid"><div class="t">Dinner out</div><div class="s"><span class="who sage"></span>You · 21:08</div></div>
+                  <div class="amt">₹30</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Analyze -->
+      <div class="bcard deep b-analyze">
+        <div class="a-grid">
+          <div>
+            <span class="eyebrow" style="color:var(--peach)">End of cycle</span>
+            <h3 style="margin-top:12px">Analyze where it went</h3>
+            <p class="body">A clear breakdown of your shared spending — by category, every cycle, so you can plan the next one together.</p>
+          </div>
+          <div class="a-mock">
+            <div class="analyze-wrap">
+              <div class="donut-row">
+                <div class="donut"></div>
+                <div class="donut-legend">
+                  <div class="leg"><span class="sw" style="background:var(--sage-deep)"></span>Groceries<span class="amt">₹8,420</span></div>
+                  <div class="leg"><span class="sw" style="background:var(--peach-pop)"></span>Rent<span class="amt">₹6,200</span></div>
+                  <div class="leg"><span class="sw" style="background:var(--sage)"></span>Transport<span class="amt">₹3,150</span></div>
+                  <div class="leg"><span class="sw" style="background:var(--peach)"></span>Dining<span class="amt">₹2,030</span></div>
+                </div>
+              </div>
+              <div class="cat-breakdown">
+                <span class="cat on">Groceries</span>
+                <span class="cat peach">Rent</span>
+                <span class="cat">Transport</span>
+                <span class="cat">Dining</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ DOWNLOAD ============================ -->
+<section class="section-pad" id="download">
+  <div class="wrap download-grid">
+    <a class="dl-card" href="#" aria-label="Get PairWise on Google Play">
+      <div class="qr">
+        <svg viewBox="0 0 100 100" aria-hidden="true" shape-rendering="crispEdges">
+          <rect width="100" height="100" fill="#fff"/>
+          <g fill="#3D4039">
+            <path d="M4 4h24v24H4zM8 8v16h16V8zM12 12h8v8h-8z"/>
+            <path d="M72 4h24v24H72zM76 8v16h16V8zM80 12h8v8h-8z"/>
+            <path d="M4 72h24v24H4zM8 76v16h16V76zM12 80h8v8h-8z"/>
+            <path d="M36 4h4v4h-4zM44 4h4v8h-4zM52 8h4v4h-4zM60 4h4v4h-4zM36 12h8v4h-8zM52 16h4v4h-4zM60 12h4v8h-4z"/>
+            <path d="M36 20h4v8h-4zM44 24h8v4h-8zM56 24h4v4h-4zM64 20h4v8h-4z"/>
+            <path d="M36 36h8v4h-8zM48 36h4v8h-4zM56 36h8v4h-8zM68 36h4v4h-4zM76 36h4v4h-4zM84 36h8v4h-8zM92 40h4v8h-4z"/>
+            <path d="M4 36h4v8H4zM12 36h8v4h-8zM24 36h4v8h-4zM4 48h8v4H4zM16 44h4v8h-4zM24 48h8v4h-8z"/>
+            <path d="M36 48h4v4h-4zM44 48h8v8h-8zM56 52h4v4h-4zM64 48h8v4h-8zM76 48h4v8h-4zM88 48h8v4h-8z"/>
+            <path d="M36 60h8v8h-8zM48 64h4v4h-4zM56 60h8v4h-8zM68 60h4v8h-4zM80 60h8v4h-8zM92 60h4v8h-4z"/>
+            <path d="M36 76h4v8h-4zM44 76h4v4h-4zM52 80h8v4h-8zM64 76h8v8h-8zM80 76h4v8h-4zM88 80h8v4h-8zM44 88h8v4h-8zM56 88h4v4h-4zM80 88h12v4H80z"/>
+          </g>
+        </svg>
+      </div>
+      <div class="meta">
+        <div class="small">Scan to install</div>
+        <div class="big">Google Play</div>
+      </div>
+      <span class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+    </a>
+
+    <div class="dl-promo">
+      <svg class="blob soft" style="bottom:-90px;left:-60px;width:280px;opacity:.55" viewBox="0 0 200 200" aria-hidden="true"><path fill="#E8A882" d="M40,-52C52,-43,62,-31,66,-17C70,-3,68,13,60,25C52,37,38,46,23,53C8,60,-9,65,-24,60C-39,55,-52,40,-58,23C-64,6,-63,-13,-55,-28C-47,-43,-32,-54,-16,-59C0,-64,16,-61,40,-52Z" transform="translate(100 100)"/></svg>
+      <h2>Start tracking, together, today.</h2>
+      <p>Free to install. No account headaches — just pair up and go.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="#">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.6 2.2 13 12 3.6 21.8c-.3-.2-.5-.5-.5-1V3.2c0-.5.2-.8.5-1Zm10.8 8.1 2.9 1.7-2.9 1.7-2-1.7 2-1.7Zm-1.2-1L4.9 3.1l9 5.2-1.7 1ZM4.9 20.9l8.3-6.2 1.7 1-9 5.2Z"/></svg>
+          Get it on Google Play
+        </a>
+        <a class="btn btn-ghost" href="https://github.com" target="_blank" rel="noopener">View the APK ↗</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ FOOTER ============================ -->
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-card">
+      <svg class="footer-burst" viewBox="0 0 200 200" width="320" height="320" aria-hidden="true">
+        <g stroke="#7D9488" stroke-width="9" stroke-linecap="round" opacity="0.9">
+          <line x1="100" y1="30" x2="100" y2="74"/><line x1="100" y1="126" x2="100" y2="170"/>
+          <line x1="30" y1="100" x2="74" y2="100"/><line x1="126" y1="100" x2="170" y2="100"/>
+          <line x1="50" y1="50" x2="80" y2="80"/><line x1="120" y1="120" x2="150" y2="150"/>
+          <line x1="150" y1="50" x2="120" y2="80"/><line x1="80" y1="120" x2="50" y2="150"/>
+        </g>
+      </svg>
+      <span class="eyebrow" style="color:var(--peach)">Open source</span>
+      <h2 style="margin-top:14px">Built in the open. Contribute on GitHub.</h2>
+      <p>PairWise is a small, honest project. Find out how you can help it grow.</p>
+      <div class="cta-row">
+        <a class="btn btn-light" href="https://github.com" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1.5A10.5 10.5 0 0 0 8.68 22a.79.79 0 0 0 .58-.21.74.74 0 0 0 .19-.52v-1.83c-2.92.63-3.54-1.4-3.54-1.4a2.78 2.78 0 0 0-1.17-1.54c-.95-.65.08-.64.08-.64a2.2 2.2 0 0 1 1.61 1.08 2.24 2.24 0 0 0 3.05.87 2.24 2.24 0 0 1 .67-1.4c-2.33-.27-4.78-1.17-4.78-5.18a4.06 4.06 0 0 1 1.08-2.82 3.78 3.78 0 0 1 .1-2.78s.88-.28 2.88 1.07a9.92 9.92 0 0 1 5.24 0c2-1.35 2.88-1.07 2.88-1.07a3.78 3.78 0 0 1 .1 2.78 4.06 4.06 0 0 1 1.08 2.82c0 4-2.46 4.9-4.8 5.16a2.5 2.5 0 0 1 .72 1.94v2.88a.75.75 0 0 0 .77.73A10.5 10.5 0 0 0 12 1.5Z"/></svg>
+          Contribute on GitHub ↗
+        </a>
+      </div>
+      <div class="footer-meta">
+        <div class="links">
+          <a href="#">Privacy Policy</a>
+          <a href="mailto:hello@pairwise.app">Support</a>
+        </div>
+        <div class="credit">Made with care for <b>shared budgets.</b></div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

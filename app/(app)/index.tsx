@@ -12,8 +12,6 @@ import { getAnchoredCycleWindow, getCycleWindow } from '@/lib/cycle';
 import { toPastSpendDate } from '@/lib/dates';
 import { keypadDigit, keypadBackspace, formatCents } from '@/lib/money';
 
-import { AppLoadingScreen } from '@/components/AppLoadingScreen';
-
 import { BudgetPill } from '@/components/BudgetPill';
 import { AmountDisplay } from '@/components/AmountDisplay';
 import { NumericKeypad } from '@/components/NumericKeypad';
@@ -37,6 +35,12 @@ export default function SpendScreen() {
   const partnership = useBudgetStore((s) => s.partnership);
   const refreshPartnership = useBudgetStore((s) => s.refreshPartnership);
   const prevCycleKeyRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (!profile?.partnership_id) return;
+    if (partnership?.id === profile.partnership_id) return;
+    refreshPartnership(profile.partnership_id);
+  }, [profile?.partnership_id, partnership?.id, refreshPartnership]);
 
   const cycleKey = partnership?.cycle_active
     ? `${partnership.current_cycle_start_at}-${partnership.monthly_budget_cents}-${partnership.cycle_start_day}`
@@ -205,11 +209,7 @@ export default function SpendScreen() {
     : undefined;
   const amountDisplay = formatCents(amountRupees * 100, currency);
 
-  if (!profile?.partnership_id || !partnership || partnership.id !== profile.partnership_id) {
-    return <AppLoadingScreen />;
-  }
-
-  if (!partnership.cycle_active) {
+  if (partnership && !partnership.cycle_active) {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: palette.background }} edges={['top']}>
         <CycleClosedScreen />

@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { writeBudgetCache, type BudgetCache } from '@/lib/appCache';
 import { ensureCycleSheetTab, maybeSyncTransaction } from '@/lib/sheetsSync';
 import { supabase, Database } from '@/lib/supabase';
 import { getAnchoredCycleWindow, getCycleWindow, inCycle, isAfterPreviousCycle } from '@/lib/cycle';
@@ -42,8 +43,10 @@ interface BudgetState {
   latestSnapshot: () => CycleSnapshot | null;
   isCycleActive: () => boolean;
 
-  loadPartnership: (partnershipId: string) => Promise<void>;
-  refreshPartnership: () => Promise<void>;
+  loadPartnership: (partnershipId: string, options?: { silent?: boolean }) => Promise<void>;
+  refreshPartnership: (partnershipId?: string) => Promise<void>;
+  applyCache: (cache: BudgetCache) => void;
+  persistCache: () => void;
   loadCycleSnapshots: () => Promise<void>;
   syncCycleState: () => Promise<void>;
   closeCycle: () => Promise<{ error: string | null }>;
@@ -138,34 +141,64 @@ export const useBudgetStore = create<BudgetState>((set, get) => ({
     return member?.display_name ?? 'Partner';
   },
 
-  loadPartnership: async (partnershipId) => {
-    const isRefresh = get().partnership?.id === partnershipId;
-    if (!isRefresh) set({ loading: true });
-
-    const [{ data: partnership }, { data: transactions }, { data: members }] = await Promise.all([
-      supabase.from('partnerships').select('*').eq('id', partnershipId).single(),
-      supabase
-        .from('transactions')
-        .select('*')
-        .eq('partnership_id', partnershipId)
-        .order('occurred_at', { ascending: false }),
-      supabase.from('profiles').select('*').eq('partnership_id', partnershipId),
-    ]);
-
+  applyCache: (cache) => {
+    if (!cache?.partnership?.id) return;
     set({
-      partnership: partnership ?? null,
-      transactions: transactions ?? [],
-      members: members ?? [],
+      partnership: cache.partnership,
+      members: cache.members ?? [],
+      transactions: cache.transactions ?? [],
+      cycleSnapshots: cache.cycleSnapshots ?? [],
       loading: false,
     });
-
-    await get().loadCycleSnapshots();
   },
 
-  refreshPartnership: async () => {
-    const partnershipId = get().partnership?.id;
-    if (!partnershipId) return;
-    await get().loadPartnership(partnershipId);
+  persistCache: () => {
+    const { partnership, members, transactions, cycleSnapshots } = get();
+    if (!partnership) return;
+    void writeBudgetCache({ partnership, members, transactions, cycleSnapshots });
+  },
+
+  loadPartnership: async (partnershipId, options) => {
+    const silent = options?.silent ?? false;
+    const hasPartnership = get().partnership?.id === partnershipId;
+    if (!silent && !hasPartnership) set({ loading: true });
+
+    try {
+      const [{ data: partnership }, { data: transactions }, { data: members }] = await Promise.all([
+        hasPartnership
+          ? Promise.resolve({ data: get().partnership })
+          : supabase.from('partnerships').select('*').eq('id', partnershipId).single(),
+        supabase
+          .from('transactions')
+          .select('*')
+          .eq('partnership_id', partnershipId)
+          .order('occurred_at', { ascending: false }),
+        supabase.from('profiles').select('*').eq('partnership_id', partnershipId),
+      ]);
+
+      set({
+        partnership: partnership ?? get().partnership,
+        transactions: transactions ?? [],
+        members: members ?? [],
+      });
+
+      await get().loadCycleSnapshots();
+      get().persistCache();
+    } catch (error) {
+      console.warn('[budget] loadPartnership failed', error);
+    } finally {
+      if (!silent && !hasPartnership) set({ loading: false });
+    }
+  },
+
+  refreshPartnership: async (partnershipId) => {
+    const id =
+      partnershipId ??
+      get().partnership?.id ??
+      useAuthStore.getState().profile?.partnership_id ??
+      undefined;
+    if (!id) return;
+    await get().loadPartnership(id, { silent: true });
   },
 
   loadCycleSnapshots: async () => {
@@ -185,8 +218,19 @@ export const useBudgetStore = create<BudgetState>((set, get) => ({
     const partnership = get().partnership;
     if (!partnership?.id || !partnership.cycle_active) return;
 
-    await supabase.rpc('maybe_close_natural_cycle');
-    await get().loadPartnership(partnership.id);
+    try {
+      await supabase.rpc('maybe_close_natural_cycle');
+      const { data } = await supabase
+        .from('partnerships')
+        .select('*')
+        .eq('id', partnership.id)
+        .single();
+      if (data) set({ partnership: data });
+      await get().loadCycleSnapshots();
+      get().persistCache();
+    } catch (error) {
+      console.warn('[budget] syncCycleState failed', error);
+    }
   },
 
   closeCycle: async () => {
@@ -221,19 +265,25 @@ export const useBudgetStore = create<BudgetState>((set, get) => ({
   updatePartnership: (partnership) =>
     set((s) => (s.partnership?.id === partnership.id ? { partnership } : s)),
 
-  addTransaction: (tx) =>
+  addTransaction: (tx) => {
     set((s) => {
       if (s.transactions.some((t) => t.id === tx.id)) return s;
       return { transactions: [tx, ...s.transactions] };
-    }),
+    });
+    get().persistCache();
+  },
 
-  updateTransaction: (tx) =>
+  updateTransaction: (tx) => {
     set((s) => ({
       transactions: s.transactions.map((t) => (t.id === tx.id ? tx : t)),
-    })),
+    }));
+    get().persistCache();
+  },
 
-  removeTransaction: (id) =>
-    set((s) => ({ transactions: s.transactions.filter((t) => t.id !== id) })),
+  removeTransaction: (id) => {
+    set((s) => ({ transactions: s.transactions.filter((t) => t.id !== id) }));
+    get().persistCache();
+  },
 
   subscribeRealtime: (partnershipId) => {
     const { unsubscribeRealtime, addTransaction, updateTransaction, removeTransaction } = get();

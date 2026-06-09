@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
-import { Stack, useRouter, useSegments } from 'expo-router';
+import { View } from 'react-native';
+import { Stack, useRootNavigationState, useRouter, useSegments } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ReducedMotionConfig, ReduceMotion } from 'react-native-reanimated';
 import { useFonts, Manrope_400Regular, Manrope_500Medium, Manrope_600SemiBold, Manrope_700Bold, Manrope_800ExtraBold } from '@expo-google-fonts/manrope';
@@ -9,10 +10,10 @@ import { AppAlertHost } from '@/components/AppAlertHost';
 import { AppLoadingScreen } from '@/components/AppLoadingScreen';
 import { ConfigErrorScreen } from '@/components/ConfigErrorScreen';
 import { toast } from '@/lib/feedback';
+import { startAuthBootstrap } from '@/lib/authBootstrap';
 import { hydrateAuthSession } from '@/lib/authSession';
 import { isSupabaseConfigured, supabase } from '@/lib/supabase';
 import { useAuthStore } from '@/stores/authStore';
-import { useBudgetStore } from '@/stores/budgetStore';
 import { useOnboardingStore } from '@/stores/onboardingStore';
 import '../global.css';
 
@@ -35,13 +36,13 @@ async function tryJoinWithPendingInvite(
 
   if (!profile?.partnership_id) return false;
 
-  await hydrateAuthSession(useAuthStore.getState().session);
+  await hydrateAuthSession(useAuthStore.getState().session, { background: true });
   useOnboardingStore.getState().reset();
   return true;
 }
 
 export default function RootLayout() {
-  const [fontsLoaded] = useFonts({
+  useFonts({
     Manrope_400Regular,
     Manrope_500Medium,
     Manrope_600SemiBold,
@@ -51,11 +52,14 @@ export default function RootLayout() {
 
   const router = useRouter();
   const segments = useSegments();
+  const navigationState = useRootNavigationState();
+  const navigationReady = Boolean(navigationState?.key);
   const { session, profile, authReady } = useAuthStore();
   const { path, pendingInviteToken } = useOnboardingStore();
   const joiningRef = useRef(false);
   const lastUserIdRef = useRef<string | null>(null);
   const hydratingRef = useRef(false);
+  const initDoneRef = useRef(false);
 
   useEffect(() => {
     if (!isSupabaseConfigured) return;
@@ -65,22 +69,50 @@ export default function RootLayout() {
     async function initAuth() {
       if (hydratingRef.current) return;
       hydratingRef.current = true;
-      const { data: { session: initialSession } } = await supabase.auth.getSession();
-      if (!mounted) return;
-      lastUserIdRef.current = initialSession?.user?.id ?? null;
-      await hydrateAuthSession(initialSession);
-      if (mounted) hydratingRef.current = false;
+      try {
+        const [, sessionResult] = await Promise.all([
+          startAuthBootstrap(),
+          supabase.auth.getSession(),
+        ]);
+        if (!mounted) return;
+
+        const initialSession = sessionResult.data.session;
+        lastUserIdRef.current = initialSession?.user?.id ?? null;
+        useAuthStore.getState().setSession(initialSession);
+
+        const bootstrapped = Boolean(
+          initialSession?.user?.id &&
+            useAuthStore.getState().profile?.id === initialSession.user.id,
+        );
+
+        await hydrateAuthSession(initialSession, { background: bootstrapped });
+      } catch (error) {
+        console.warn('[auth] init failed', error);
+        if (mounted) useAuthStore.getState().setAuthReady(true);
+      } finally {
+        initDoneRef.current = true;
+        if (mounted) hydratingRef.current = false;
+      }
     }
 
     void initAuth();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, newSession) => {
+      if (event === 'INITIAL_SESSION' && !initDoneRef.current) return;
+
       const nextUserId = newSession?.user?.id ?? null;
       const sameUser = nextUserId === lastUserIdRef.current;
-      const ready = useAuthStore.getState().authReady;
+      const { authReady: ready, profile: currentProfile } = useAuthStore.getState();
 
-      if (event === 'INITIAL_SESSION' && ready) {
+      if (event === 'INITIAL_SESSION') {
         useAuthStore.getState().setSession(newSession);
+        const profileMatches = Boolean(
+          newSession?.user?.id && currentProfile?.id === newSession.user.id,
+        );
+        if (ready && profileMatches) return;
+
+        lastUserIdRef.current = nextUserId;
+        await hydrateAuthSession(newSession, { background: ready || profileMatches });
         return;
       }
 
@@ -90,7 +122,9 @@ export default function RootLayout() {
       }
 
       lastUserIdRef.current = nextUserId;
-      await hydrateAuthSession(newSession);
+      const keepUi =
+        Boolean(newSession?.user?.id) && currentProfile?.id === newSession.user.id;
+      await hydrateAuthSession(newSession, { background: keepUi });
     });
 
     return () => {
@@ -111,11 +145,16 @@ export default function RootLayout() {
   }, [session, profile, pendingInviteToken, path, authReady]);
 
   useEffect(() => {
-    if (!fontsLoaded || !authReady) return;
+    if (!authReady || !navigationReady) return;
 
     const inAuth = segments[0] === '(auth)';
     const inOnboard = segments[0] === '(onboard)';
     const inApp = segments[0] === '(app)';
+
+    if (session?.user && profile?.partnership_id) {
+      if (!inApp) router.replace('/(app)');
+      return;
+    }
 
     if (!session) {
       const onWelcome = segments[1] === 'welcome';
@@ -127,18 +166,14 @@ export default function RootLayout() {
       return;
     }
 
-    if (!profile?.partnership_id) {
-      if (path === 'invite') {
-        if (pendingInviteToken) return;
-        if (!inAuth) router.replace('/(auth)/invite-code');
-        return;
-      }
-      if (!inOnboard) router.replace('/(onboard)/create');
+    if (path === 'invite') {
+      if (pendingInviteToken) return;
+      if (!inAuth) router.replace('/(auth)/invite-code');
       return;
     }
 
-    if (!inApp) router.replace('/(app)');
-  }, [session, profile, fontsLoaded, authReady, segments, path, pendingInviteToken]);
+    if (!inOnboard) router.replace('/(onboard)/create');
+  }, [session, profile, authReady, navigationReady, segments, path, pendingInviteToken, router]);
 
   if (!isSupabaseConfigured) {
     return (
@@ -150,15 +185,7 @@ export default function RootLayout() {
     );
   }
 
-  if (!fontsLoaded || !authReady) {
-    return (
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <ThemeProvider>
-          <AppLoadingScreen />
-        </ThemeProvider>
-      </GestureHandlerRootView>
-    );
-  }
+  const showBootLoader = !authReady;
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -167,6 +194,11 @@ export default function RootLayout() {
         <Stack screenOptions={{ headerShown: false, animation: 'slide_from_right' }} />
         <ToastHost />
         <AppAlertHost />
+        {showBootLoader ? (
+          <View style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0 }}>
+            <AppLoadingScreen />
+          </View>
+        ) : null}
       </ThemeProvider>
     </GestureHandlerRootView>
   );
